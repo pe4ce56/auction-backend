@@ -7,6 +7,9 @@ import { Category } from './category/entities/category.entity';
 import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { ProductModule } from './product/product.module';
+import { Product } from './product/entities/product.entity';
+import { Image } from './product/entities/image.entity';
 
 @Module({
   imports: [
@@ -17,10 +20,10 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
       username: 'debian-sys-maint',
       password: 'vtOp0bqRECt71sw4',
       database: 'auction_db',
-      entities: [Category],
+      autoLoadEntities: true,
       synchronize: true,
     })
-    ,CategoryModule, AuthModule],
+    ,CategoryModule, AuthModule, ProductModule],
   controllers: [AppController],
   providers: [AppService],
 })
