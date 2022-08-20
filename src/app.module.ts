@@ -10,6 +10,7 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { ProductModule } from './product/product.module';
 import { Product } from './product/entities/product.entity';
 import { Image } from './product/entities/image.entity';
+import { AuctionModule } from './auction/auction.module';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { Image } from './product/entities/image.entity';
       synchronize: true,
       logging: true
     })
-    , CategoryModule, AuthModule, ProductModule],
+    , CategoryModule, AuthModule, ProductModule, AuctionModule],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -43,15 +43,23 @@ export class ProductController {
 
   @Public()
   @Get("/category/:category")
-  findByCategory(@Param('category') category: number) {
-    return this.productService.findByCategory(category);
+  async findByCategory(@Param('category') category: number) {
+    const product = await this.productService.findByCategory(category)
+    if (!product) {
+      throw new HttpException('Product Not Found', HttpStatus.BAD_REQUEST);
+    }
+    return product
   }
 
 
   @Roles('admin')
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.productService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    const product = await this.productService.findOne(+id)
+    if (!product) {
+      throw new HttpException('Product Not Found', HttpStatus.BAD_REQUEST);
+    }
+    return product
   }
 
   @Roles('admin')

@@ -1,3 +1,4 @@
+import { Auction } from "src/auction/entities/auction.entity";
 import { Category } from "src/category/entities/category.entity";
 import { BaseEntity, Column, CreateDateColumn, Entity, IsNull, JoinTable, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Image } from "./image.entity";
@@ -40,4 +41,10 @@ export class Product extends BaseEntity {
     })
     @JoinTable()
     images: Image[];
+
+    @OneToMany(() => Auction, (auction) => auction.product, {
+        cascade: true
+    })
+    @JoinTable()
+    auctions: Auction[];
 }

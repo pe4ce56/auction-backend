@@ -21,7 +21,7 @@ export class CreateProductDto {
   price: number
 
   @IsInt()
-  @Min(0)
+  @IsNotEmpty()
   category: number
 
   @IsString()
