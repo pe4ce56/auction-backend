@@ -15,6 +15,9 @@ export class Image extends BaseEntity {
     @UpdateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP(6)", onUpdate: "CURRENT_TIMESTAMP(6)" })
     updated_at: Date;
 
-    @ManyToOne(() => Product, (product) => product.images,)
+    @ManyToOne(() => Product, (product) => product.images, {
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
+    })
     product: Product;
 }

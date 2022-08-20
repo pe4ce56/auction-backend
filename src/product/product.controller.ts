@@ -23,7 +23,7 @@ export class ProductController {
     let images = [];
     for (let i in createProductDto.images) {
       const image = new Image
-      image.name = createProductDto.name + "_" + await bcrypt.hash(createProductDto.name + Date.now(), 8) + ".jpg"
+      image.name = await bcrypt.hash(createProductDto.name + Date.now(), 8) + ".jpg"
       images.push(image)
     }
     const product = {
@@ -84,7 +84,6 @@ export class ProductController {
       }
     }
     for (let j of index) {
-      console.log(product.images[j].id)
       this.productService.removeImage(product.images[j].id)
       product.images.splice(product.images.indexOf(product.images[j]), 1)
     }
@@ -101,7 +100,7 @@ export class ProductController {
 
       if (!found) {
         const image = new Image
-        image.name = updateProductDto.name + "_" + await bcrypt.hash(updateProductDto.name + Date.now(), 8) + ".jpg"
+        image.name = await bcrypt.hash(updateProductDto.name + Date.now(), 8) + ".jpg"
         product.images.push(image)
       }
     }

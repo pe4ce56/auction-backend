@@ -29,13 +29,14 @@ export class Product extends BaseEntity {
     updated_at: Date;
 
     @ManyToOne(() => Category, (category) => category.products, {
-        cascade: ["insert", "remove", "update"],
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
     })
     @JoinTable()
     category: Category;
 
     @OneToMany(() => Image, (image) => image.product, {
-        cascade: ["insert", "remove", "update"],
+        cascade: true
     })
     @JoinTable()
     images: Image[];

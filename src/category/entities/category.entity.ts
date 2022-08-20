@@ -21,6 +21,8 @@ export class Category extends BaseEntity {
     @UpdateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP(6)", onUpdate: "CURRENT_TIMESTAMP(6)" })
     updated_at: Date;
 
-    @OneToMany(() => Product, (product) => product.category)
+    @OneToMany(() => Product, (product) => product.category, {
+        cascade: true
+    })
     products: Product[];
 }
