@@ -1,17 +1,38 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Public, Roles } from 'src/auth/jwt-auth.guard';
+import { ApiBearerAuth, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
+import { Product } from './entities/product.entity';
+import { ImageAbstract } from 'src/common/Abstraction/ProductAbsctraction';
+import * as bcrypt from 'bcrypt';
+import { response } from 'express';
+import { Image } from './entities/image.entity';
+import { Category } from 'src/category/entities/category.entity';
 
+@ApiBearerAuth()
 @Controller('product')
+@ApiTags('Products')
 export class ProductController {
-  constructor(private readonly productService: ProductService) {}
+  constructor(private readonly productService: ProductService) { }
 
   @Roles('admin')
   @Post()
-  create(@Body() createProductDto: CreateProductDto) {
-    return this.productService.create(createProductDto);
+  async create(@Body() createProductDto: CreateProductDto) {
+    let images = [];
+    for (let i in createProductDto.images) {
+      const image = new Image
+      image.name = createProductDto.name + "_" + await bcrypt.hash(createProductDto.name + Date.now(), 8) + ".jpg"
+      images.push(image)
+    }
+    const product = {
+      ...createProductDto,
+      information: JSON.stringify(createProductDto.information),
+      document: JSON.stringify(createProductDto.document),
+      images,
+    }
+    return this.productService.create(product);
   }
 
   @Public()
@@ -20,23 +41,76 @@ export class ProductController {
     return this.productService.findAll();
   }
 
-  @Public() 
+  @Public()
   @Get("/category/:category")
   findByCategory(@Param('category') category: number) {
     return this.productService.findByCategory(category);
   }
 
 
+  @Roles('admin')
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.productService.findOne(+id);
   }
 
+  @Roles('admin')
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-    return this.productService.update(+id, updateProductDto);
+  async update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
+    const product = await this.productService.findOne(+id)
+    if (!product) {
+      throw new HttpException('Product Not Found', HttpStatus.BAD_REQUEST);
+    }
+    product.name = updateProductDto.name
+    product.price = updateProductDto.price.toString()
+    product.description = updateProductDto.description
+    product.information = JSON.stringify(updateProductDto.information)
+    product.document = JSON.stringify(updateProductDto.document)
+    product.category.id = updateProductDto.category
+
+    //check removed image
+    let index = []
+    for (let j in product.images) {
+      let found = false;
+      for (let i in updateProductDto.images) {
+        if (product.images[j].name === updateProductDto.images[i].name) {
+          found = true;
+          break;
+        }
+      }
+
+      if (!found) {
+        index.push(j)
+      }
+    }
+    for (let j of index) {
+      console.log(product.images[j].id)
+      this.productService.removeImage(product.images[j].id)
+      product.images.splice(product.images.indexOf(product.images[j]), 1)
+    }
+
+    //check new image
+    for (let i in updateProductDto.images) {
+      let found = false
+      for (let j in product.images) {
+        if (product.images[j].name === updateProductDto.images[i].name) {
+          found = true
+          break;
+        }
+      }
+
+      if (!found) {
+        const image = new Image
+        image.name = updateProductDto.name + "_" + await bcrypt.hash(updateProductDto.name + Date.now(), 8) + ".jpg"
+        product.images.push(image)
+      }
+    }
+
+    return this.productService.update(+id, product)
   }
 
+
+  @Roles('admin')
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.productService.remove(+id);

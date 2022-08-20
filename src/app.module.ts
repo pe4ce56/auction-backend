@@ -22,9 +22,10 @@ import { Image } from './product/entities/image.entity';
       database: 'auction_db',
       autoLoadEntities: true,
       synchronize: true,
+      logging: true
     })
-    ,CategoryModule, AuthModule, ProductModule],
+    , CategoryModule, AuthModule, ProductModule],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

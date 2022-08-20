@@ -13,9 +13,10 @@ export class AppController {
     return this.authService.login(req.body);
   }
 
+  @Public()
   @Get("test")
   test(){
-    return "test"
+    return this.authService.login({username: "damai",password: "damai"});
   }
 
   
