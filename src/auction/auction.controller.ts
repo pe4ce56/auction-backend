@@ -130,6 +130,13 @@ export class AuctionController {
     if (auction.status !== Status.OPEN) {
       throw new HttpException('auction is not open', HttpStatus.BAD_REQUEST);
     }
+    if (auction.histories.length > 0 && +auction.histories[1].price >= bidAuction.price) {
+      throw new HttpException('bid must be greater than before', HttpStatus.BAD_REQUEST);
+    }
+    if (bidAuction.price % +auction.multiples != 0) {
+      throw new HttpException(`bid must be multiples ${auction.multiples}`, HttpStatus.BAD_REQUEST);
+    }
+
     const bid = await this.auctionService.bid(+id, +decrypt(bidAuction.userId), bidAuction.price)
     if (bid) {
       if (auction.final_price && +auction.final_price <= bidAuction.price) {

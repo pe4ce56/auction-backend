@@ -3,15 +3,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CategoryModule } from './category/category.module';
-import { Category } from './category/entities/category.entity';
 import { AuthModule } from './auth/auth.module';
-import { APP_GUARD } from '@nestjs/core';
-import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { ProductModule } from './product/product.module';
-import { Product } from './product/entities/product.entity';
-import { Image } from './product/entities/image.entity';
 import { AuctionModule } from './auction/auction.module';
-
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -25,7 +19,8 @@ import { AuctionModule } from './auction/auction.module';
       synchronize: true,
       logging: true
     })
-    , CategoryModule, AuthModule, ProductModule, AuctionModule],
+    , CategoryModule, AuthModule, ProductModule, AuctionModule
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Filter } from 'src/common/data.enum';
-import { Any, Between, In, Raw, Repository, UpdateResult } from 'typeorm';
+import { Any, Between, In, LessThan, LessThanOrEqual, MoreThanOrEqual, Raw, Repository, UpdateResult } from 'typeorm';
 import { CreateAuctionDto } from './dto/create-auction.dto';
 import { UpdateAuctionDto } from './dto/update-auction.dto';
 import { Auction, Status } from './entities/auction.entity';
 import { History } from './entities/history.entity';
+import { format } from 'date-fns';
 
 @Injectable()
 export class AuctionService {
@@ -84,9 +85,14 @@ export class AuctionService {
 
   findOne(id: number): Promise<Auction> {
     return this.auctionRepository.findOne({
-      relations: ['product', 'product.category', 'product.images'],
+      relations: ['product', 'product.category', 'product.images', 'histories'],
       where: {
         id: id
+      },
+      order: {
+        histories: {
+          price: "asc"
+        }
       }
     })
   }
@@ -112,5 +118,20 @@ export class AuctionService {
   }
   updateStatus(id: number, status: Status): Promise<UpdateResult> {
     return this.auctionRepository.update(id, { status: status })
+  }
+
+
+  checkCloseStatus(): Promise<UpdateResult> {
+    return this.auctionRepository.update({
+      end_date: LessThanOrEqual(new Date()),
+      status: Status.OPEN,
+    }, { status: Status.CLOSE })
+  }
+  checkOpenStatus(): Promise<UpdateResult> {
+    return this.auctionRepository.update({
+      start_date: LessThanOrEqual(new Date()),
+      end_date: MoreThanOrEqual(new Date()),
+      status: Status.PENDING,
+    }, { status: Status.OPEN })
   }
 }

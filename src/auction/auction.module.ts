@@ -8,10 +8,12 @@ import { ProductService } from 'src/product/product.service';
 import { Product } from 'src/product/entities/product.entity';
 import { Image } from 'src/product/entities/image.entity';
 import { Category } from 'src/category/entities/category.entity';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TasksService } from './task.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Auction, History, Product, Image, Category])],
+  imports: [TypeOrmModule.forFeature([Auction, History, Product, Image, Category]), ScheduleModule.forRoot()],
   controllers: [AuctionController],
-  providers: [AuctionService, ProductService]
+  providers: [AuctionService, ProductService, TasksService]
 })
 export class AuctionModule { }
