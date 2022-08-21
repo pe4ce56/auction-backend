@@ -1,6 +1,7 @@
 import { Category } from "src/category/entities/category.entity";
 import { Product } from "src/product/entities/product.entity";
 import { BaseEntity, Column, CreateDateColumn, Entity, IsNull, JoinTable, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { History } from "./history.entity";
 
 export enum Status {
     OPEN = 'open',
@@ -22,11 +23,14 @@ export class Auction extends BaseEntity {
     @Column({ type: 'bool', default: true })
     show_document: boolean;
 
-    @Column({ type: 'enum', enum: Status, default: Status.CLOSE })
-    status: ['open', 'close', 'pending']
+    @Column({ type: 'enum', enum: Status, default: Status.OPEN })
+    status: Status
 
     @Column({ nullable: true })
     final_price: string
+
+    @Column()
+    multiples: string
 
     @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP(6)" })
     created_at: Date;
@@ -41,5 +45,10 @@ export class Auction extends BaseEntity {
     @JoinTable()
     product: Product;
 
+    @OneToMany(() => History, (history) => history.auction, {
+        cascade: true
+    })
+    @JoinTable()
+    histories: History[];
 
 }

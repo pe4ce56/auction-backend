@@ -1,14 +1,14 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsBoolean, IsDate, IsInt, IsNotEmpty, IsNumber, } from "class-validator"
+import { IsBoolean, IsDate, IsDateString, IsEmpty, IsIn, IsInt, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, } from "class-validator"
 
 
 export class CreateAuctionDto {
-    @IsDate()
+    @IsDateString()
     @IsNotEmpty()
     @ApiProperty({ type: Date })
     start_date: Date
 
-    @IsDate()
+    @IsDateString()
     @IsNotEmpty()
     @ApiProperty({ type: Date })
     end_date: Date
@@ -18,8 +18,18 @@ export class CreateAuctionDto {
     @ApiProperty()
     show_document: boolean
 
+    @IsNumber({ maxDecimalPlaces: 0 })
+    @IsPositive()
+    @IsNotEmpty()
+    @ApiProperty()
+    multiples: number
+
+    @IsNumber({ maxDecimalPlaces: 0 })
+    @IsOptional()
+    final_price!: number
 
     @IsInt()
+    @IsPositive()
     @IsNotEmpty()
     @ApiProperty()
     product: number

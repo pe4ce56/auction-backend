@@ -9,7 +9,7 @@ export class CreateProductDto {
   @ApiProperty()
   name: string
 
-  @IsInt()
+  @IsNumber({ maxDecimalPlaces: 0 })
   @Min(0)
   @IsPositive()
   @IsNotEmpty()
