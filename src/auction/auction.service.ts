@@ -132,6 +132,9 @@ export class AuctionService {
       start_date: LessThanOrEqual(new Date()),
       end_date: MoreThanOrEqual(new Date()),
       status: Status.PENDING,
-    }, { status: Status.OPEN })
+    }, {
+      status: Status
+        .OPEN
+    })
   }
 }
