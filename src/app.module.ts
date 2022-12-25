@@ -8,20 +8,24 @@ import { ProductModule } from './product/product.module';
 import { AuctionModule } from './auction/auction.module';
 import { UserModule } from './user/user.module';
 import { TenantModule } from './tenant/tenant.module';
+import { ConfigModule } from '@nestjs/config';
+import { LateReasonModule } from './late-reason/late-reason.module';
+
+
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: 'root',
-      database: 'auction_db',
+      host: process.env.DATABASE_HOST,
+      username: process.env.DATABASE_USER,
+      password: process.env.DATABASE_PASS,
+      database: process.env.DATABASE_NAME,
       autoLoadEntities: true,
       synchronize: true,
       logging: true
     })
-    , CategoryModule, AuthModule, ProductModule, AuctionModule, UserModule, TenantModule
+    , CategoryModule, AuthModule, ProductModule, AuctionModule, UserModule, TenantModule, LateReasonModule
   ],
   controllers: [AppController],
   providers: [AppService],
